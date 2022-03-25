@@ -19,23 +19,26 @@ public class MainActivity extends AppCompatActivity {
     // SharedPreferences to store local data like current user
     private final String sharedPrefFile = "com.example.android.mainsharedprefs";
     public static final String USER_KEY = "ID_KEY";
+    public static final String REGISTER_NAME_KEY = "REGISTER_NAME_KEY";
     SharedPreferences userPreferences;
 
     // GUI items
     EditText nameEditText;
     EditText pwEditText;
-    Button submitButton;
+    Button loginButton;
+    Button registerButton;
 
     LocalDatabase dat = new LocalDatabase();
+    Middleman middleman = new Middleman(dat);
     User currentUser;
 
     /**
      * Initialises the test state.
      */
     private void initialState() {
-        dat.add(User.Student(0, "John", "password"));
-        dat.add(User.Student(1, "Jack", "pw"));
-        dat.add(User.Staff(2, "A staff", "asdf"));
+        middleman.add(User.Student(0, "John", "password"));
+        middleman.add(User.Student(1, "Jack", "pw"));
+        middleman.add(User.Staff(2, "A staff", "asdf"));
     }
 
     @Override
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUserID < 0) {
             currentUser = User.Guest();
         } else {
-            currentUser = dat.getUserById(currentUserID);
+            currentUser = middleman.getUserById(currentUserID);
         }
 
         // if user is not a Guest, skip to the Users activity
@@ -67,16 +70,17 @@ public class MainActivity extends AppCompatActivity {
         // initialise ids of GUI components
         nameEditText = findViewById(R.id.nameEditText);
         pwEditText = findViewById(R.id.pwEditText);
-        submitButton = findViewById(R.id.submitButton);
+        loginButton = findViewById(R.id.loginButton);
+        registerButton = findViewById(R.id.registerButton);
 
-        // onclick handler for submitButton
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        // onclick handler for loginButton
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = nameEditText.getText().toString();
                 String password = pwEditText.getText().toString();
 
-                User testUser = dat.authenticate(name, password);
+                User testUser = middleman.authenticate(name, password);
                 if (testUser == null) {
                     Toast failedAuthToast = Toast.makeText(MainActivity.this, "Failed to log in!", Toast.LENGTH_LONG);
                     failedAuthToast.show();
@@ -92,6 +96,19 @@ public class MainActivity extends AppCompatActivity {
                     Intent goToUsersActivityIntent = new Intent (MainActivity.this, UsersActivity.class);
                     startActivity(goToUsersActivityIntent);
                 }
+            }
+        });
+
+        // onclick handler for registerButton
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameEditText.getText().toString();
+
+                // make an intent that goes to the register page, carrying over the name
+                Intent goToRegisterActivityIntent = new Intent (MainActivity.this, RegisterActivity.class);
+                goToRegisterActivityIntent.putExtra(REGISTER_NAME_KEY, name);
+                startActivity(goToRegisterActivityIntent);
             }
         });
     }

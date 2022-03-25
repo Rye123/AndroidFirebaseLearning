@@ -82,25 +82,6 @@ public class LocalDatabase{
     }
 
     /**
-     * Returns the user if the given credentials are correct.
-     * @param name string of the user's name
-     * @param password string of the user's password
-     * @return User if credentials are correct, null otherwise
-     */
-    public User authenticate (String name, String password) {
-        for (User user : users) {
-            if (user.getName().equals(name)) {
-                if (user.verifyPassword(password)) {
-                    return user;
-                } else {
-                    return null; // avoids searching the rest of the list
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the user based on the ID given.
      * @param id integer value of the user ID
      * @return User if the user exists in the user ArrayList, User.Guest otherwise
