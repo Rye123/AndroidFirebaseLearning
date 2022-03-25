@@ -17,24 +17,16 @@ public class UsersActivity extends AppCompatActivity {
     // SharedPreferences to store local data like current user
     private final String sharedPrefFile = "com.example.android.mainsharedprefs";
     public static final String USER_KEY = "ID_KEY";
+    public static final String RETURN_TO_MAIN_KEY = "RETURN_TO_MAIN_KEY";
     SharedPreferences userPreferences;
 
     // GUI items
     TextView welcomeText;
     Button logoutButton;
+    Button clearDatabaseButton;
 
-    LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
-    Middleman middleman = new Middleman(getApplicationContext());
+    Middleman middleman;
     User currentUser;
-
-    /**
-     * Initialises the test state.
-     */
-    private void initialState() {
-        middleman.add(User.Student(0, "John", "password"));
-        middleman.add(User.Student(1, "Jack", "pw"));
-        middleman.add(User.Staff(2, "A staff", "asdf"));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +34,7 @@ public class UsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_users);
 
         // update users ArrayList
-        initialState();
+        middleman = new Middleman(getApplicationContext());
 
         // Get the current user's preferences if any
         userPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
@@ -63,6 +55,7 @@ public class UsersActivity extends AppCompatActivity {
         // initialise IDs of GUI components
         welcomeText = findViewById(R.id.welcomeText);
         logoutButton = findViewById(R.id.logoutButton);
+        clearDatabaseButton = findViewById(R.id.clearDatabaseButton);
 
         welcomeText.setText(
                 String.format(
@@ -80,9 +73,29 @@ public class UsersActivity extends AppCompatActivity {
                 userPrefEdit.clear();
                 userPrefEdit.apply();
 
-                // go to users activity
-                Intent goToUsersActivityIntent = new Intent (UsersActivity.this, MainActivity.class);
-                startActivity(goToUsersActivityIntent);
+                // return to main activity
+                Intent goToMainActivityIntent = new Intent (UsersActivity.this, MainActivity.class);
+                goToMainActivityIntent.putExtra(RETURN_TO_MAIN_KEY, "Log out successful!");
+                startActivity(goToMainActivityIntent);
+            }
+        });
+
+        // onclick handler for debug clearDatabaseButton
+        clearDatabaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // update SharedPrefs
+                SharedPreferences.Editor userPrefEdit = userPreferences.edit();
+                userPrefEdit.clear();
+                userPrefEdit.apply();
+
+                // update database
+                middleman.clear();
+
+                // return to main activity
+                Intent goToMainActivityIntent = new Intent (UsersActivity.this, MainActivity.class);
+                goToMainActivityIntent.putExtra(RETURN_TO_MAIN_KEY, "All user data cleared!");
+                startActivity(goToMainActivityIntent);
             }
         });
     }

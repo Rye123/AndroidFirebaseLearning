@@ -1,11 +1,19 @@
 package com.example.androidfirebaselearning;
 
+import android.content.Context;
+import android.util.Log;
+
+import androidx.room.Room;
+
 import com.example.androidfirebaselearning.user.LocalDatabase;
 import com.example.androidfirebaselearning.user.LocalDatabaseLegacy;
 import com.example.androidfirebaselearning.user.User;
+import com.example.androidfirebaselearning.user.UserDao;
+import com.example.androidfirebaselearning.user.UserType;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 // import com.google.firebase.database.DatabaseReference;
 // import com.google.firebase.database.FirebaseDatabase;
 
@@ -17,9 +25,19 @@ public class Middleman {
     LocalDatabase localDatabase;
     FirebaseDatabase fbDatabase;
 
-    public Middleman(LocalDatabaseLegacy database) {
-        localDatabaseLegacy = database;
-        // fbDatabase = FirebaseDatabase.getInstance().getReference; // root node
+    /**
+     * Initialises the test state
+     * @param middleman
+     */
+    public static void initialise(Middleman middleman) {
+        middleman.add(User.Student(0, "John", "password"));
+        middleman.add(User.Student(1, "Jack", "pw"));
+        middleman.add(User.Staff(2, "A staff", "asdf"));
+    }
+
+    public Middleman(Context appContext) {
+        //TODO: Refactor to avoid running on main thread -- need to learn about LiveData wrapper
+        localDatabase = Room.databaseBuilder(appContext, LocalDatabase.class, "local_database").allowMainThreadQueries().build();
     }
 
     /**
@@ -28,7 +46,8 @@ public class Middleman {
      * @return User
      */
     public User get (int index) {
-        return localDatabaseLegacy.get(index);
+        UserDao userDao = localDatabase.userDao();
+        return userDao.getUserById(index);
     }
 
     /**
@@ -37,7 +56,9 @@ public class Middleman {
      * @return
      */
     public int indexOf (User user) {
-        return localDatabaseLegacy.indexOf(user);
+        UserDao userDao = localDatabase.userDao();
+        List<User> users = userDao.getAllUsers();
+        return users.indexOf(user);
     }
 
     /**
@@ -45,7 +66,8 @@ public class Middleman {
      * @param newUser
      */
     public void add (User newUser) {
-        localDatabaseLegacy.add(newUser);
+        UserDao userDao = localDatabase.userDao();
+        userDao.insert(newUser);
     }
 
     /**
@@ -53,7 +75,9 @@ public class Middleman {
      * @param index integer value of the position of the element to remove
      */
     public void remove (int index) {
-        localDatabaseLegacy.remove(index);
+        UserDao userDao = localDatabase.userDao();
+        User user = get(index);
+        userDao.delete(user);
     }
 
     /**
@@ -61,7 +85,8 @@ public class Middleman {
      * @param u User to remove
      */
     public void remove (User u) {
-        localDatabaseLegacy.remove(u);
+        UserDao userDao = localDatabase.userDao();
+        userDao.delete(u);
     }
 
     /**
@@ -69,7 +94,7 @@ public class Middleman {
      * @return
      */
     public boolean isEmpty() {
-        return localDatabaseLegacy.isEmpty();
+        return (size() == 0);
     }
 
     /**
@@ -77,14 +102,16 @@ public class Middleman {
      * @return
      */
     public int size () {
-        return localDatabaseLegacy.size();
+        UserDao userDao = localDatabase.userDao();
+        return userDao.size();
     }
 
     /**
      * Removes all elements from the LocalDatabase.
      */
     public void clear () {
-        localDatabaseLegacy.clear();
+        UserDao userDao = localDatabase.userDao();
+        userDao.deleteAll();
     }
 
     /**
@@ -94,7 +121,7 @@ public class Middleman {
      * @return User if credentials are correct, null otherwise
      */
     public User authenticate (String name, String password) {
-        for (User user : localDatabaseLegacy.getUsers()) {
+        for (User user : getUsers()) {
             if (user.getName().equals(name)) {
                 if (user.verifyPassword(password)) {
                     return user;
@@ -112,13 +139,30 @@ public class Middleman {
      * @return User if the user exists in the user ArrayList, User.Guest otherwise
      */
     public User getUserById (int id) {
-        return localDatabaseLegacy.getUserById(id);
+        UserDao userDao = localDatabase.userDao();
+        User user = userDao.getUserById(id);
+        if (user == null)
+            return User.Guest();
+        return user;
     }
 
     /**
      * Returns an ArrayList of the users.
      */
     public ArrayList<User> getUsers () {
-        return localDatabaseLegacy.getUsers();
+        UserDao userDao = localDatabase.userDao();
+        return (ArrayList<User>) userDao.getAllUsers();
+    }
+
+    /**
+     * Generates a unique ID.
+     * @return integer representing a unique ID.
+     */
+    public int generateUniqueId() {
+        int test_id = size();
+        while (!getUserById(test_id).getType().equals(UserType.GUEST))
+            test_id++;
+
+        return test_id;
     }
 }

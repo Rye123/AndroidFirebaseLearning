@@ -21,12 +21,21 @@ public interface UserDao {
     @Delete
     void delete(User user);
 
+    @Query("DELETE FROM users")
+    void deleteAll();
+
     @Query("SELECT * FROM users WHERE id LIKE :id")
     User getUserById(int id);
+
+    @Query("SELECT * FROM users WHERE name LIKE :name LIMIT 1")
+    User getSingleUser(String name);
 
     @Query("SELECT * FROM users WHERE name LIKE :name AND password LIKE :password")
     User getUserByNameAndPassword(String name, String password);
 
     @Query("SELECT * FROM users")
     List<User> getAllUsers();
+
+    @Query("SELECT COUNT(id) FROM users")
+    int size();
 }

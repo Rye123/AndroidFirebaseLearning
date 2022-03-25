@@ -2,4 +2,8 @@
     <string name="app_name">AndroidFirebaseLearning</string>
     <string name="users_activity_name">Users</string>
     <string name="welcome_text">Welcome, %1s!</string>
+    <string-array name="user_types">
+        <item>Student</item>
+        <item>Staff</item>
+    </string-array>
 </resources>

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private final String sharedPrefFile = "com.example.android.mainsharedprefs";
     public static final String USER_KEY = "ID_KEY";
     public static final String REGISTER_NAME_KEY = "REGISTER_NAME_KEY";
+    public static final String RETURN_TO_MAIN_KEY = "RETURN_TO_MAIN_KEY";
     SharedPreferences userPreferences;
 
     // GUI items
@@ -28,18 +29,10 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton;
     Button registerButton;
 
-    LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
-    Middleman middleman = new Middleman(dat);
+    // Database stuff
+    // LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
+    Middleman middleman;
     User currentUser;
-
-    /**
-     * Initialises the test state.
-     */
-    private void initialState() {
-        middleman.add(User.Student(0, "John", "password"));
-        middleman.add(User.Student(1, "Jack", "pw"));
-        middleman.add(User.Staff(2, "A staff", "asdf"));
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +40,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // TODO: Can probably refactor getting the current user into a separate class to handle database extraction and checking.
+        // Toast any incoming message
+        Intent receivedIntent = getIntent();
+        String msg = receivedIntent.getStringExtra(RETURN_TO_MAIN_KEY);
+        if (msg != null)
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
-        // update users ArrayList
-        initialState();
+
+        // update users
+        middleman = new Middleman(getApplicationContext());
 
         // Get the current user's preferences if any
         userPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
