@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.androidfirebaselearning.user.LocalDatabase;
+import com.example.androidfirebaselearning.user.LocalDatabaseLegacy;
 import com.example.androidfirebaselearning.user.User;
 import com.example.androidfirebaselearning.user.UserType;
 
@@ -23,7 +23,7 @@ public class UsersActivity extends AppCompatActivity {
     TextView welcomeText;
     Button logoutButton;
 
-    LocalDatabase dat = new LocalDatabase();
+    LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
     User currentUser;
 
     /**

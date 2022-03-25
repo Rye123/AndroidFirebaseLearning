@@ -1,6 +1,7 @@
 package com.example.androidfirebaselearning;
 
 import com.example.androidfirebaselearning.user.LocalDatabase;
+import com.example.androidfirebaselearning.user.LocalDatabaseLegacy;
 import com.example.androidfirebaselearning.user.User;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -12,11 +13,12 @@ import java.util.ArrayList;
  * Handles interaction between database and app
  */
 public class Middleman {
+    LocalDatabaseLegacy localDatabaseLegacy;
     LocalDatabase localDatabase;
     FirebaseDatabase fbDatabase;
 
-    public Middleman(LocalDatabase database) {
-        localDatabase = database;
+    public Middleman(LocalDatabaseLegacy database) {
+        localDatabaseLegacy = database;
         // fbDatabase = FirebaseDatabase.getInstance().getReference; // root node
     }
 
@@ -26,7 +28,7 @@ public class Middleman {
      * @return User
      */
     public User get (int index) {
-        return localDatabase.get(index);
+        return localDatabaseLegacy.get(index);
     }
 
     /**
@@ -35,15 +37,15 @@ public class Middleman {
      * @return
      */
     public int indexOf (User user) {
-        return localDatabase.indexOf(user);
+        return localDatabaseLegacy.indexOf(user);
     }
 
     /**
-     * Adds a new User to the list.
+     * Adds a new User to the database.
      * @param newUser
      */
     public void add (User newUser) {
-        localDatabase.add(newUser);
+        localDatabaseLegacy.add(newUser);
     }
 
     /**
@@ -51,7 +53,7 @@ public class Middleman {
      * @param index integer value of the position of the element to remove
      */
     public void remove (int index) {
-        localDatabase.remove(index);
+        localDatabaseLegacy.remove(index);
     }
 
     /**
@@ -59,7 +61,7 @@ public class Middleman {
      * @param u User to remove
      */
     public void remove (User u) {
-        localDatabase.remove(u);
+        localDatabaseLegacy.remove(u);
     }
 
     /**
@@ -67,7 +69,7 @@ public class Middleman {
      * @return
      */
     public boolean isEmpty() {
-        return localDatabase.isEmpty();
+        return localDatabaseLegacy.isEmpty();
     }
 
     /**
@@ -75,14 +77,14 @@ public class Middleman {
      * @return
      */
     public int size () {
-        return localDatabase.size();
+        return localDatabaseLegacy.size();
     }
 
     /**
      * Removes all elements from the LocalDatabase.
      */
     public void clear () {
-        localDatabase.clear();
+        localDatabaseLegacy.clear();
     }
 
     /**
@@ -92,7 +94,7 @@ public class Middleman {
      * @return User if credentials are correct, null otherwise
      */
     public User authenticate (String name, String password) {
-        for (User user : localDatabase.getUsers()) {
+        for (User user : localDatabaseLegacy.getUsers()) {
             if (user.getName().equals(name)) {
                 if (user.verifyPassword(password)) {
                     return user;
@@ -110,21 +112,13 @@ public class Middleman {
      * @return User if the user exists in the user ArrayList, User.Guest otherwise
      */
     public User getUserById (int id) {
-        return localDatabase.getUserById(id);
+        return localDatabaseLegacy.getUserById(id);
     }
 
     /**
      * Returns an ArrayList of the users.
      */
     public ArrayList<User> getUsers () {
-        return localDatabase.getUsers();
-    }
-
-    /**
-     * Adds Object o to the database.
-     * @param o Object to add
-     */
-    public void add(Object o) {
-
+        return localDatabaseLegacy.getUsers();
     }
 }

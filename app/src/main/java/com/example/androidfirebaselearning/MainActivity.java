@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.androidfirebaselearning.user.LocalDatabase;
+import com.example.androidfirebaselearning.user.LocalDatabaseLegacy;
 import com.example.androidfirebaselearning.user.User;
 import com.example.androidfirebaselearning.user.UserType;
 
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton;
     Button registerButton;
 
-    LocalDatabase dat = new LocalDatabase();
+    LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
     Middleman middleman = new Middleman(dat);
     User currentUser;
 
