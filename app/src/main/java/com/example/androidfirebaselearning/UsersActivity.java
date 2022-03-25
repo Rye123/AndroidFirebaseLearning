@@ -24,15 +24,16 @@ public class UsersActivity extends AppCompatActivity {
     Button logoutButton;
 
     LocalDatabaseLegacy dat = new LocalDatabaseLegacy();
+    Middleman middleman = new Middleman(getApplicationContext());
     User currentUser;
 
     /**
      * Initialises the test state.
      */
     private void initialState() {
-        dat.add(User.Student(0, "John", "password"));
-        dat.add(User.Student(1, "Jack", "pw"));
-        dat.add(User.Staff(2, "A staff", "asdf"));
+        middleman.add(User.Student(0, "John", "password"));
+        middleman.add(User.Student(1, "Jack", "pw"));
+        middleman.add(User.Staff(2, "A staff", "asdf"));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UsersActivity extends AppCompatActivity {
         if (currentUserID < 0) {
             currentUser = User.Guest();
         } else {
-            currentUser = dat.getUserById(currentUserID);
+            currentUser = middleman.getUserById(currentUserID);
         }
 
         // if user is a Guest, go back to Log in
