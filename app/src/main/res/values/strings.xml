@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidFirebaseLearning</string>
+    <string name="users_activity_name">Users</string>
+    <string name="welcome_text">Welcome, %1s!</string>
 </resources>
