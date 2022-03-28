@@ -51,13 +51,19 @@ public class MainActivity extends AppCompatActivity {
         middleman = new Middleman(getApplicationContext());
 
         // Get the current user's preferences if any
+        // TODO: Allow user to 'refresh' to check if data is loaded
         userPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         int currentUserID = userPreferences.getInt(USER_KEY, -1);
         // TODO: refactor to remove if statement?
         if (currentUserID < 0) {
             currentUser = User.Guest();
         } else {
-            currentUser = middleman.getUserById(currentUserID);
+            if (middleman.dataLoaded)
+                currentUser = middleman.getUserById(currentUserID);
+            else {
+                Toast.makeText(this, "Data hasn't been loaded, please refresh!", Toast.LENGTH_SHORT).show();
+                currentUser = User.Guest();
+            }
         }
 
         // if user is not a Guest, skip to the Users activity
