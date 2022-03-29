@@ -35,20 +35,10 @@ public class Middleman {
 
     boolean dataLoaded;
 
-    /**
-     * Initialises the test state
-     * @param middleman
-     */
-    public static void initialise(Middleman middleman) {
-        middleman.add(User.Student(0, "John", "password"));
-        middleman.add(User.Student(1, "Jack", "pw"));
-        middleman.add(User.Staff(2, "A staff", "asdf"));
-    }
-
     public Middleman(Context appContext) {
         //TODO: Refactor to avoid running on main thread -- need to learn about LiveData wrapper
         localDatabase = Room.databaseBuilder(appContext, LocalDatabase.class, "local_database").allowMainThreadQueries().build();
-        fbDatabase = FirebaseDatabase.getInstance(/*url to database*/);
+        fbDatabase = FirebaseDatabase.getInstance(appContext.getString(R.string.firebase_url));
         DatabaseReference root = fbDatabase.getReference();
         dataLoaded = false;
         root.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
